@@ -1,0 +1,263 @@
+/* styles.css */
+
+
+body {
+    font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+    color: #2c3e50;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+h1, h2, h3 {
+    color: #2c3e50;
+    margin-top: 0;
+}
+
+h1 {
+    font-size: 2.6em;
+}
+
+h2 {
+    font-size: 1.8em;
+    padding-left: 12px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.titulo-seccion h2 {
+    border-left: 6px solid #3498db;
+    padding-left: 12px;
+    margin-bottom: 20px;
+}
+
+section {
+    padding: 40px 60px;
+    background-color: #ffffff;
+}
+
+.page-break {
+    page-break-after: always;
+}
+
+/* Portada */
+.portada {
+    background-color: #007bff; /* azul primario sólido */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    height: 90vh;
+}
+
+.contenedor-portada h1 {
+    font-size: 2.8em;
+    margin-bottom: 20px;
+}
+
+.contenedor-portada h2 {
+    font-size: 2em;
+    font-weight: normal;
+    margin-bottom: 10px;
+}
+
+.contenedor-portada .marca {
+    margin-top: 60px;
+    font-style: italic;
+    font-size: 1.1em;
+    color: #ecf0f1;
+}
+
+/* Métricas */
+.metricas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.cuadro {
+    flex: 1 1 200px;
+    background: #eaf4fc;
+    border-left: 5px solid #007acc;
+    border-radius: 6px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.cuadro:hover {
+    transform: translateY(-2px);
+}
+
+.cuadro .icono {
+    font-size: 2.2em;
+    margin-bottom: 10px;
+    color: #007acc;
+}
+
+.cuadro .valor {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.cuadro .leyenda {
+    margin-top: 5px;
+    font-size: 0.95em;
+    color: #7f8c8d;
+}
+
+.destacados-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.tarjeta-lista {
+    flex: 1 1 300px;
+    background-color: #f4f8fb;
+    border-left: 5px solid #3498db;
+    border-radius: 6px;
+    padding: 20px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.05);
+}
+
+.tarjeta-lista h4 {
+    margin-top: 0;
+    font-size: 1.1em;
+    color: #2c3e50;
+}
+
+.tarjeta-lista ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 10px 0 0 0;
+}
+
+.tarjeta-lista li::before {
+    content: "•";
+    color: #3498db;
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: 0;
+}
+
+.graficos-destacados {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 30px;
+}
+
+.graficos-destacados > div {
+    flex: 1 1 300px;
+}
+
+.graficos-destacados h4 {
+    margin-bottom: 50px;
+}
+
+.graficos-destacados canvas {
+    max-width: 400px;
+    max-height: 400px;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+}
+
+.territorio-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 30px;
+}
+
+.territorio-grid > div {
+    flex: 1 1 500px;
+}
+
+.tabla-organos,
+.tabla-contratos,
+.tabla-provincias {
+    max-width: 1000px;
+    margin: 0 auto;
+    overflow-x: auto;
+    table-layout: auto;
+    border-collapse: collapse;
+    font-size: 0.95em;
+    background-color: #ffffff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+}
+
+.tabla-organos th,
+.tabla-contratos th,
+.tabla-provincias th {
+    background-color: #3498db;
+    color: #fff;
+    text-align: left;
+    padding: 10px;
+    font-weight: 600;
+}
+
+.tabla-organos td,
+.tabla-contratos td,
+.tabla-provincias td {
+    padding: 10px;
+    border-top: 1px solid #eaeaea;
+}
+
+.tabla-contratos td,
+.tabla-contratos th {
+    font-size: 11px;
+}
+
+.tabla-organos tr:nth-child(even),
+.tabla-contratos tr:nth-child(even),
+.tabla-provincias tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+.info {
+  padding: 6px 8px;
+  background: white;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  font-size: 14px;
+}
+.info h4 {
+  margin: 0 0 5px;
+}
+.legend {
+  line-height: 18px;
+  color: #555;
+  background: white;
+  padding: 6px 8px;
+  font-size: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin-right: 8px;
+  opacity: 0.7;
+}
+
+.texto-verde {
+    color: #2e7d32;
+    font-weight: bold;
+}
+.texto-rojo {
+    color: #c62828;
+    font-weight: bold;
+}

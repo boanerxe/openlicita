@@ -1,0 +1,12 @@
+{
+    "1"     : "Suministros",
+    "2"     : "Servicios",
+    "3"     : "Obras",
+    "21"    : "Gestión de Servicios Públicos",
+    "31"    : "Concesión de Obras Públicas",
+    "40"    : "Colaboración entre el sector público y privado",
+    "7"     : "Administrativo especial",
+    "8"     : "Privado",
+    "50"    : "Patrimonial",
+    "999"   : "Otros"
+}

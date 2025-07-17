@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Informe OSINT – {{ empresa }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jscharting.com/latest/jscharting.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/topojson-client@3"></script>
+
+</head>
+<body>
+    <!-- Portada -->
+    <section class="portada page-break">
+        <div class="contenedor-portada">
+            <h1>Informe OSINT de contratos públicos</h1>
+            <h2>{{ empresa }}</h2>
+            <p><strong>CIF:</strong> {{ cif }}</p>
+            <p><strong>Año analizado:</strong> {{ anio }}</p>
+            <div class="marca">
+                <p>Powered by <strong>Openlicita</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resumen -->
+    <section class="resumen page-break">
+        <div class="titulo-seccion">
+            <h2>Resumen</h2>
+        </div>
+        <p>La empresa <strong>{{ empresa }}</strong> (CIF {{ cif }}) ha sido adjudicataria de un total de <strong>{{ total_contratos }}</strong> contratos públicos en el año {{ anio }}, por un importe total de <strong>{{ importe_total }} €</strong>.</p>
+
+        <div class="metricas">
+            <div class="cuadro">
+                <div class="icono"><i class="fa-solid fa-building"></i></div>
+                <div class="valor">{{ total_organos }}</div>
+                <div class="leyenda">Órganos de contratación distintos</div>
+            </div>
+            <div class="cuadro">
+                <div class="icono"><i class="fa-solid fa-users"></i></div>
+                <div class="valor">{{ media_licitadores }}</div>
+                <div class="leyenda">Media de licitadores por contrato</div>
+            </div>
+            <div class="cuadro">
+                <div class="icono"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></div>
+                <div class="valor">{{ porcentaje_sin_competencia }}%</div>
+                <div class="leyenda">Contratos con adjudicación directa</div>
+            </div>
+            <div class="cuadro">
+                <div class="icono"><i class="fa fa-times" aria-hidden="true"></i></div>
+                <div class="valor">{{ porcentaje_anulados }}%</div>
+                <div class="leyenda">Contratos anulados</div>
+            </div>
+            <div class="cuadro">
+                <div class="icono"><i class="fa-solid fa-money-bill-trend-up"></i></div>
+                <div class="valor">{{ porcentaje_modificados }}%</div>
+                <div class="leyenda">Contratos modificados</div>
+            </div>
+        </div>
+        
+        
+    </section>
+
+    <section class="page-break">
+        <div class="detalles-empresa">
+            <div class="titulo-seccion">
+                <h2>Datos destacados</h2>
+            </div>
+            <div class="destacados-grid">
+                <div class="tarjeta-lista">
+                    <h4>Top 3 CPVs más frecuentes</h4>
+                    <ul>
+                        {% for cpv in top_cpvs %}
+                            <li>{{ cpv }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="tarjeta-lista">
+                    <h4>Territorios con más adjudicaciones</h4>
+                    <ul>
+                        {% for provincia in top_provincias %}
+                            <li>{{ provincia }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="tarjeta-lista">
+                    <h4>Organismos con más contratos</h4>
+                    <ul>
+                        {% for organismo in top_organismos %}
+                            <li>{{ organismo }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="graficos-destacados">
+                <div>
+                    <h4>Distribución de contratos por tipo</h4>
+                    <canvas id="chartTiposContrato" data-labels='{{ tipos_contrato_labels | tojson | safe }}' data-values='{{ tipos_contrato_data | tojson | safe }}'></canvas>
+                </div>
+                <div>
+                    <h4>Importe adjudicado por tipo de contrato</h4>
+                    <canvas id="chartImportesTipo" data-labels='{{ tipos_contrato_labels | tojson | safe }}' data-values='{{ importes_contrato_data | tojson | safe }}'></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Órganos de contratación y territorios -->
+    <section class="territorio page-break">
+        <div class="titulo-seccion">
+            <h2>Órganos de contratación y territorios</h2>
+        </div>
+
+        <!-- Tabla de órganos -->
+        <h4>Órganos de contratación</h4>
+        <table class="tabla-organos">
+            <thead>
+                <tr>
+                    <th>Órgano de contratación</th>
+                    <th>Nº contratos ganados</th>
+                    <th>Importe total adjudicado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in tabla_organos %}
+                <tr>
+                    <td>{{ item.nombre }}</td>
+                    <td>{{ item.num_contratos }}</td>
+                    <td>{{ item.importe_total | round(2) }} €</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Tabla de provincias + mapa -->
+        <div class="territorio-grid">
+            <div>
+                <h4>Adjudicaciones por territorio</h4>
+                <table class="tabla-provincias">
+                    <thead>
+                        <tr>
+                            <th>Territorio</th>
+                            <th>Nº contratos ganados</th>
+                            <th>Importe adjudicado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in tabla_provincias %}
+                        <tr>
+                            <td>{{ item.nombre }}</td>
+                            <td>{{ item.num_contratos }}</td>
+                            <td>{{ item.importe_total }} €</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <h4>Mapa de calor territorial</h4>
+                <div id="map" style="height: 500px;"></div>
+                <canvas id="mapaCalor" data-values='{{ mapa_comunidades | tojson | safe }}' style="display:none;"></canvas>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Sección: Contratos anulados -->
+    <section class="page-break">
+        <div class="titulo-seccion">
+            <h2>Contratos anulados</h2>
+        </div>
+        {% if contratos_anulados %}
+        <div class="tabla-contratos">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Número de expediente</th>
+                        <th>Órgano de contratación</th>
+                        <th>Importe</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contrato in contratos_anulados %}
+                    <tr>
+                        <td><a href="{{ contrato.enlace }}" target="_blank">{{ contrato.expediente }}</a></td>
+                        <td>{{ contrato.organo_contratacion }}</td>
+                        <td>{{ contrato.importe_total }} €</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="text-align:center; font-style: italic;">No hay contratos anulados.</p>
+        {% endif %}
+    </section>
+
+    <!-- Sección: Contratos sin competencia -->
+    <section class="page-break">
+        <div class="titulo-seccion">
+            <h2>Contratos sin competencia</h2>
+        </div>
+        {% if contratos_sin_competencia %}
+        <div class="tabla-contratos">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Número de expediente</th>
+                        <th>Órgano de contratación</th>
+                        <th>Importe</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contrato in contratos_sin_competencia %}
+                    <tr>
+                        <td><a href="{{ contrato.enlace }}" target="_blank">{{ contrato.expediente }}</a></td>
+                        <td>{{ contrato.organo_contratacion }}</td>
+                        <td>{{ contrato.importe_total }} €</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="text-align:center; font-style: italic;">No hay contratos sin competencia.</p>
+        {% endif %}
+    </section>
+
+    <!-- Sección: Contratos modificados con sobrecostes -->
+    <section class="page-break">
+        <div class="titulo-seccion">
+            <h2>Contratos modificados con sobrecostes</h2>
+        </div>
+        {% if contratos_modificados %}
+        <div class="tabla-contratos">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Número de expediente</th>
+                        <th>Órgano de contratación</th>
+                        <th>Importe sobrecoste</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contrato in contratos_modificados %}
+                    <tr>
+                        <td><a href="{{ contrato.enlace }}" target="_blank">{{ contrato.expediente }}</a></td>
+                        <td>{{ contrato.organo_contratacion }}</td>
+                        <td>{{ contrato.importe_modificado }} €</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="text-align:center; font-style: italic;">No hay contratos modificados con sobrecostes.</p>
+        {% endif %}
+    </section>
+
+    <!-- Sección: Listado completo de contratos -->
+    <section class="page-break">
+        <div class="titulo-seccion">
+            <h2>Listado completo de contratos adjudicados</h2>
+        </div>
+        <div class="tabla-contratos" >
+            <table>
+                <thead>
+                    <tr>
+                        <th>Expediente</th>
+                        <th>Órgano de contratación</th>
+                        <th>Importe</th>
+                        <th>Territorio</th>
+                        <th>Ampliado</th>
+                        <th>Anulado</th>
+                        <th>Oferta más baja</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contrato in contratos_completos %}
+                    <tr>
+                        <td style="word-break: break-word;" class="td-acorta"><a href="{{ contrato.enlace }}" target="_blank">{{ contrato.expediente }}</a></td>
+                        <td style="word-break: break-word;" class="td-acorta">{{ contrato.organo_contratacion }}</td>
+                        <td>{{ contrato.importe_total }} €</td>
+                        <td>{{ contrato.territorio }}</td>
+                        <td style="text-align: center;">{% if contrato.ampliado %}<i class="fa fa-check"></i>{% endif %}</td>
+                        <td style="text-align: center;">{% if contrato.anulado %}<i class="fa fa-check"></i>{% endif %}</td>
+                        <td>{% if contrato.oferta_mas_baja %}<span class="texto-verde">Sí</span>{% else %}<span class="texto-rojo">No</span>{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+
+
+    <script>
+        function crearGrafico(id, tipo, etiqueta, color, mostrarLeyenda = true) {
+            const canvas = document.getElementById(id);
+            const labels = JSON.parse(canvas.dataset.labels);
+            const data = JSON.parse(canvas.dataset.values);
+
+            new Chart(canvas, {
+                type: tipo,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: etiqueta,
+                        data: data,
+                        backgroundColor: tipo === 'pie' ? ['#3498db', '#2ecc71', '#f39c12'] : color
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: mostrarLeyenda, position: 'bottom' }
+                    },
+                    scales: tipo === 'bar' ? {
+                        y: {
+                            beginAtZero: true
+                        }
+                    } : {}
+                }
+            });
+        }
+
+        crearGrafico('chartTiposContrato', 'pie', 'Nº de contratos', '', true);
+        crearGrafico('chartImportesTipo', 'bar', 'Importe (€)', '#3498db', false);
+    </script>
+
+    
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const canvas = document.getElementById('mapaCalor');
+    const rawData = JSON.parse(canvas.dataset.values || '[]');
+
+    fetch("https://unpkg.com/es-atlas@0.6.0/es/autonomous_regions.json")
+        .then(res => res.json())
+        .then(topo => {
+        const geojson = topojson.feature(topo, topo.objects.autonomous_regions);
+        const valores = new Map(rawData.map(e => [e.comunidad, e.value]));
+        const maxValor = Math.max(...[...valores.values(), 1]);
+
+        const getColor = val => {
+            return val > 20 ? '#084081' :
+                val > 10 ? '#0868ac' :
+                val > 5  ? '#2b8cbe' :
+                val > 0  ? '#a6bddb' :
+                            '#f0f0f0';
+        };
+
+        const style = feature => {
+            const nombre = feature.properties.name;
+            const valor = valores.get(nombre) || 0;
+            return {
+            fillColor: getColor(valor),
+            weight: 1,
+            opacity: 1,
+            color: 'white',
+            fillOpacity: 0.7
+            };
+        };
+
+        const mapa = L.map('map').setView([40.0, -3.7], 6);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap',
+            maxZoom: 10
+        }).addTo(mapa);
+
+        function highlightFeature(e) {
+            const layer = e.target;
+            layer.setStyle({
+            weight: 2,
+            color: '#666',
+            fillOpacity: 0.9
+            });
+
+            if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+            layer.bringToFront();
+            }
+
+            const nombre = layer.feature.properties.name;
+            const valor = valores.get(nombre) || 0;
+            info.update(nombre, valor);
+        }
+
+        function resetHighlight(e) {
+            geojsonLayer.resetStyle(e.target);
+            info.update(); // Limpia el panel al salir
+        }
+
+        function onEachFeature(feature, layer) {
+            layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight
+            });
+        }
+
+        const geojsonLayer = L.geoJSON(geojson, {
+            style,
+            onEachFeature
+        }).addTo(mapa);
+
+        //Tooltip flotante (tipo control)
+        const info = L.control();
+
+        info.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info');
+            this.update();
+            return this._div;
+        };
+
+        info.update = function (nombre, valor) {
+            this._div.innerHTML = nombre
+            ? `<b>${nombre}</b><br/>${valor} contratos`
+            : 'Pasa el puntero por una provincia';
+        };
+
+        info.addTo(mapa);
+
+        //Leyenda de colores
+        const legend = L.control({ position: 'bottomright' });
+
+        legend.onAdd = function (map) {
+            const div = L.DomUtil.create('div', 'info legend');
+            const grades = [0, 1, 5, 10, 20];
+            const labels = [];
+
+            for (let i = 0; i < grades.length; i++) {
+            const from = grades[i];
+            const to = grades[i + 1];
+
+            labels.push(
+                `<i style="background:${getColor(from + 0.1)}"></i> ${from}${to ? `-${to}` : '+'}`
+            );
+            }
+
+            div.innerHTML = labels.join('<br>');
+            return div;
+        };
+
+        legend.addTo(mapa);
+        });
+    });
+    </script>
+
+
+</body>
+</html>

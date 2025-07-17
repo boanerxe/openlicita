@@ -1,0 +1,15 @@
+# Core
+pandas>=2.0.0
+jinja2>=3.1.0
+requests>=2.3.4
+
+# Exportación a Excel
+openpyxl>=3.1.0
+
+
+# HTML → PDF con soporte JS (Playwright)
+playwright>=1.42.0
+
+
+# Visualización y depuración (opcional)
+tqdm>=4.66.0

@@ -1,0 +1,17 @@
+{
+    "1"     : "Abierto",
+    "2"     : "Restringido",
+    "3"     : "Negociado sin publicidad",
+    "4"     : "Negociado con publicidad",
+    "5"     : "Diálogo competitivo",
+    "6"     : "Contrato Menor",
+    "7"     : "Derivado de acuerdo marco",
+    "8"     : "Concurso de proyectos",
+    "9"     : "Desconocido",
+    "10"    : "Desconocido",
+    "11"    : "Desconocido",
+    "12"    : "Desconocido",
+    "13"    : "Desconocido",
+    "100"   : "Normas internas",
+    "999"   : "Otros"
+}
