@@ -34,9 +34,9 @@
 
 openlicita/
 │
-├── templates/ # Plantillas Jinja2 (HTML del informe)
-├── data/ # Archivos json auxiliares
-├── temp/ # Almacenamiento de los datos anuales descargados de la administración
+├── templates/ # Plantillas Jinja2 (HTML del informe)  
+├── data/ # Archivos json auxiliares  
+├── temp/ # Almacenamiento de los datos anuales descargados de la administración  
 └── openlicita.py # Script principal
 
 ## 🛠 Requisitos
@@ -61,5 +61,5 @@ playwright install
 `python openlicita.py -e "NTT DATA" -y 2022`
 
 # 🙋‍♂️ Autor
-**Santi** – Creador de Openlicita
+**Santi** – Creador de Openlicita  
 **Contacto:** [salvarez@ornova.es]
