@@ -32,8 +32,8 @@
 
 ## 📂 Estructura del proyecto
 
-openlicita/
-│
+openlicita/  
+│  
 ├── templates/ # Plantillas Jinja2 (HTML del informe)  
 ├── data/ # Archivos json auxiliares  
 ├── temp/ # Almacenamiento de los datos anuales descargados de la administración  
