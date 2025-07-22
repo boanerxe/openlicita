@@ -2,6 +2,20 @@
 # Esta librería implementa la funcionalidad de parseo de los ficheros xml. Sirve para extraer los datos que nos interesan
 # de las licitaciones adjudicadas a una determinada empresa, y se queda con los datos que nos interesa analizar más tarde.
 # Crea un fichero json que almacena ya en la ruta de salida y devuelve el nombre del fichero como resultado
+#    Copyright (C) 2025 Santiago Alvarez
+
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import os
 import xml.etree.ElementTree as ET
