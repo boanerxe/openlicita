@@ -141,6 +141,11 @@ class ParserContratos:
 
                                 importe = resultado.find('.//cac:AwardedTenderedProject/cac:LegalMonetaryTotal/cbc:TaxExclusiveAmount',self.ns)
                                 num_licitadores = resultado.find('.//cbc:ReceivedTenderQuantity',self.ns)
+                                if num_licitadores != None:
+                                    num_licitadores = num_licitadores.text
+                                else:
+                                    num_licitadores = '0'
+                                
                                 #Procesa oferta_mas_baja
                                 oferta_mas_baja = resultado.find('.//cbc:LowerTenderAmountQuantity',self.ns)
                                 if oferta_mas_baja != None:
@@ -155,7 +160,7 @@ class ParserContratos:
                                 lote = {
                                     'num_lote': num_lote, 
                                     'resultado': self.tenderResultCodes[estado2_code.text],
-                                    'num_licitadores': num_licitadores.text,
+                                    'num_licitadores': num_licitadores,
                                     'importe': importe.text,
                                     'oferta_mas_baja' : oferta_mas_baja
                                 }
@@ -174,7 +179,10 @@ class ParserContratos:
                         if tipo != None:
                             if tipo.text in ['2', '3']:
                                 subtipo = entry.find('.//cac-place-ext:ContractFolderStatus/cac:ProcurementProject/cbc:SubTypeCode', self.ns)
-                                subtipo = self.subTypeCodes[subtipo.text]
+                                if subtipo != None:
+                                    subtipo = self.subTypeCodes[subtipo.text]
+                                else:
+                                    subtipo = ''
                             else:
                                 subtipo = ''
                             tipo = self.typeCodes[tipo.text]

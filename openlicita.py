@@ -163,7 +163,7 @@ def descarga_ficheros(year):
         try:
             url = url_base + str(year) + ".zip"
             if imp: print(f"Descargando datos de {year}. Ten paciencia, tardaremos un rato:")
-            response = requests.get(url, stream=True)
+            response = requests.get(url, stream=True, timeout=(5,20))
             total = int(response.headers.get('content-length', 0))
             chunk_size = 1024
 
@@ -185,6 +185,7 @@ def descarga_ficheros(year):
             if os.path.exists(carpeta_descargas+str(year)+".zip"):
                 os.remove(carpeta_descargas+str(year)+".zip")
         except KeyboardInterrupt:
+            print("Descarga interrumpida por el usuario.")
             if os.path.exists(carpeta_descargas+str(year)+".zip"):
                 os.remove(carpeta_descargas+str(year)+".zip")
 
@@ -247,8 +248,9 @@ if __name__ == "__main__":
     if imp: print(f"Encontrados: {resultado} contratos")
 
     #Crea ficheros de salida
-    inf = Informes(args.s, nombre_salida+'.json', str(args.year))
-    inf.genera_informes(args.pdf, args.excel)
+    if resultado > 0:
+        inf = Informes(args.s, nombre_salida+'.json', str(args.year))
+        inf.genera_informes(args.pdf, args.excel)
 
 
     #print(args.e)
